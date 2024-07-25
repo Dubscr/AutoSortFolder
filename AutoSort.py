@@ -2,13 +2,17 @@ import os
 import shutil
 import time
 import datetime
-# Get the list of all files and directories
-path = "C:/Users/Owner/Downloads"
+import configparser
+thisPath = os.path.dirname(os.path.realpath(__file__)).replace("\\", "/") + "/"
+config = configparser.ConfigParser()
+config.read(thisPath + 'config.ini')
+config.sections()
+downloadPath = config['DEFAULT']['DownloadPath']
 ignoreItems = ["desktop.ini", ""]
 ignoreSuffix = [".download", ".crdownload", ".part", ".partial"]
-sortedPath = "C:/Users/Owner/Desktop/AutoSortFolder/Sorted/"
-unsortedPath = "C:/Users/Owner/Desktop/AutoSortFolder/Unsorted/"
-logsPath = "C:/Users/Owner/Desktop/AutoSortFolder/Logs/"
+sortedPath = thisPath + "Sorted/"
+unsortedPath = thisPath + "Unsorted/"
+logsPath = thisPath + "Logs/"
 
 audioSuffix = [".mp3", ".wav", ".ogg"]
 imagesSuffix = [".png", ".jpg", ".jpeg", ".gif", ".img"]
@@ -34,10 +38,10 @@ def Log(data):
 
 # Get folders inside of downloads
 def StageOne():
-    dir_list = os.listdir(path)
+    dir_list = os.listdir(downloadPath)
     for x in dir_list:
         if(IsValidFile(x)):
-            validFiles.append(path + "/" + x)
+            validFiles.append(downloadPath + "/" + x)
     StageTwo(validFiles)
 
 # Check if ignore file. This is to avoid moving important files
