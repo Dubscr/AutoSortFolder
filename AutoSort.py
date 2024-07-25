@@ -95,20 +95,14 @@ def StageTwo(validFiles):
                 MoveFile(fileName, unsortedPath)
                 continue
 
-def PlayBeep():
-    winsound.Beep(1108, 500)
-    winsound.Beep(1244, 500)
-    winsound.Beep(1396, 500)
-    winsound.Beep(1108, 500)
-
 startTime = time.time()
 
 def CheckDownloadsLoop():
 
     while(True):
-        timeElapsed = time.time() - startTime
         StageOne()
-        PlayBeep()
+        timeElapsed = time.time() - startTime
+        Log("Time elapsed: " + timeElapsed)
         time.sleep(3600)
 
 CheckDownloadsLoop()
