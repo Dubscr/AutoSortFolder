@@ -5,12 +5,14 @@ import datetime
 # Get the list of all files and directories
 path = "C:/Users/Owner/Downloads"
 ignoreItems = ["desktop.ini", ""]
+ignoreSuffix = [".download", ".crdownload", ".part", ".partial"]
 sortedPath = "C:/Users/Owner/Desktop/AutoSortFolder/Sorted/"
 unsortedPath = "C:/Users/Owner/Desktop/AutoSortFolder/Unsorted/"
 logsPath = "C:/Users/Owner/Desktop/AutoSortFolder/Logs/"
 
 audioSuffix = [".mp3", ".wav", ".ogg"]
-imagesSuffix = [".png", ".jpg", ".jpeg", ".gif"]
+imagesSuffix = [".png", ".jpg", ".jpeg", ".gif", ".img"]
+videosSuffix = [".mp4", ".mov", ".mpeg", ".avi"]
 documentsSuffix = [".docx", ".txt", ".pdf"]
 
 validFiles = list()
@@ -33,7 +35,6 @@ def Log(data):
 # Get folders inside of downloads
 def StageOne():
     dir_list = os.listdir(path)
-    print("Files and directories in '", path, "' :")
     for x in dir_list:
         if(IsValidFile(x)):
             validFiles.append(path + "/" + x)
@@ -45,6 +46,9 @@ def IsValidFile(filePath):
         if(filePath == x):
             return False
         if(str(filePath).startswith("~")):
+            return False
+    for x in ignoreSuffix:
+        if(str(filePath).lower().endswith(x)):
             return False
     return True
 
@@ -58,7 +62,7 @@ def MoveFile(file, destination):
         quit()
 
 def CheckSuffix(fileName):
-    fileName = str(fileName)
+    fileName = str(fileName).lower()
     for x in imagesSuffix:
         if(fileName.endswith(x)):
             return "image"
@@ -68,6 +72,9 @@ def CheckSuffix(fileName):
     for x in documentsSuffix:
         if(fileName.endswith(x)):
             return "doc"
+    for x in videosSuffix:
+        if(fileName.endswith(x)):
+            return "video"
     if(fileName.endswith(".zip")):
         return "zip"
     return "unsorted"
@@ -75,7 +82,6 @@ def CheckSuffix(fileName):
 # With list of valid files to move, move them to correct folder
 def StageTwo(validFiles):
     for fileName in validFiles:
-        print(fileName)
         matchVar = CheckSuffix(fileName)
         match matchVar:
             case "image":
@@ -87,6 +93,9 @@ def StageTwo(validFiles):
             case "doc":
                 MoveFile(fileName, sortedPath + "Documents/")
                 continue
+            case "video":
+                MoveFile(fileName, sortedPath + "Videos/")
+                continue
             case "zip":
                 MoveFile(fileName, sortedPath + "Zipped/")
                 continue
@@ -97,11 +106,11 @@ def StageTwo(validFiles):
 startTime = time.time()
 
 def CheckDownloadsLoop():
-
+    time.sleep(15)
     while(True):
         StageOne()
         timeElapsed = time.time() - startTime
-        Log("Time elapsed: " + timeElapsed)
+        Log("Time elapsed: " + str(round(timeElapsed)) + "s")
         time.sleep(3600)
 
 CheckDownloadsLoop()
