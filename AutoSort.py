@@ -5,14 +5,14 @@ import datetime
 import configparser
 thisPath = os.path.dirname(os.path.realpath(__file__)).replace("\\", "/") + "/"
 config = configparser.ConfigParser()
-config.read(thisPath + 'config.ini')
+config.read(thisPath + 'Data/Config/config.ini')
 config.sections()
 downloadPath = config['DEFAULT']['DownloadPath']
 ignoreItems = ["desktop.ini", ""]
 ignoreSuffix = [".download", ".crdownload", ".part", ".partial"]
-sortedPath = thisPath + "Sorted/"
-unsortedPath = thisPath + "Unsorted/"
-logsPath = thisPath + "Logs/"
+sortedPath = thisPath + "Data/Sorted/"
+unsortedPath = thisPath + "Data/Unsorted/"
+logsPath = thisPath + "Data/Logs/"
 
 audioSuffix = [".mp3", ".wav", ".ogg"]
 imagesSuffix = [".png", ".jpg", ".jpeg", ".gif", ".img"]
@@ -31,9 +31,12 @@ def Log(data):
         f.write("\n" + time + ": " + data)
         f.close()
     else:
-        f = open(specPath, "a")
+        f = open(specPath, "w")
         f.write(time + ": " +data)
         f.close()
+        if(os.path.exists(os.path.dirname(logsPath) + "/" + "empty")):
+            os.remove(os.path.dirname(logsPath) + "/" + "empty")
+            Log("Cleared temporary empty file at: " + os.path.dirname(logsPath))
 
 
 # Get folders inside of downloads
@@ -61,9 +64,13 @@ def MoveFile(file, destination):
     try:
         shutil.move(file, destination + os.path.basename(file))
         Log("Moved " + os.path.basename(file) + " successfully.")
+        if(os.path.exists(os.path.dirname(destination) + "/" + "empty")):
+            os.remove(os.path.dirname(destination) + "/" + "empty")
+            Log("Cleared temporary empty file at: " + os.path.dirname(destination))
     except OSError:
         Log("ERROR: Failed to move " + os.path.basename(file) + " to " + destination)
         quit()
+    
 
 def CheckSuffix(fileName):
     fileName = str(fileName).lower()
